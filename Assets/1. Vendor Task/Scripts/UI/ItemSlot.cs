@@ -1,23 +1,49 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace VendorTask.UI
 {
-    public class ItemSlot : MonoBehaviour
+    public class ItemSlot : UIElement, IDropHandler
     {
-        private Transform _content;
+        public UIElement Content { get; private set; }
 
-        public void SetContent(Transform content)
+        public void Initialize(UIElement content)
         {
-            _content = content;
-            _content.SetParent(transform);
+            Content = content;
         }
 
-        public void RemoveContent()
+        public void OnDrop(PointerEventData eventData)
         {
-            if (_content == null)
+            if (Content != null || eventData.pointerDrag.TryGetComponent<DragAndDropElement>(out var element) == false)
                 return;
 
-            _content.SetParent(null);
+            Content = element;
+            element.SetEventData(new DragAndDropEventData(
+                RectTransform.position,
+                RemoveContent));
         }
+
+        private void RemoveContent()
+        {
+            Content = null;
+        }
+
+        #region Debug
+
+        protected override void OnAwake()
+        {
+            _debugColor = GetComponent<Image>().color;
+        }
+
+        private Color _debugColor;
+
+        private void OnDrawGizmos()
+        {
+            var color = Content == null ? _debugColor : Color.red;
+            GetComponent<Image>().color = color;
+        }
+
+        #endregion
     }
 }

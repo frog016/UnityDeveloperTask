@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,7 +13,8 @@ namespace VendorTask.Items
 
         public int Id => _id;
 
-        private void OnValidate()
+        [ContextMenu(nameof(ChangeAssetName))]
+        private void ChangeAssetName()
         {
             var assetPath = AssetDatabase.GetAssetPath(GetInstanceID());
             AssetDatabase.RenameAsset(assetPath, _name);

@@ -13,7 +13,7 @@ namespace VendorTask.UI
         [SerializeField] private Transform _viewRoot;
         [SerializeField] private RectTransform _layoutGroup;
 
-        public event Action<ItemView> ItemDroppedIntoSlot; 
+        public event Action<ItemSlot, ItemView> ItemDroppedInSlot; 
 
         private UIFactory _uiFactory;
         private ItemSlot[] _slots;
@@ -25,24 +25,25 @@ namespace VendorTask.UI
             _uiFactory = uiFactory;
             _slots = FindSlotsInChildren();
             InitializeSlotsWithItems(items);
+
+            foreach (var slot in _slots)
+                slot.ItemDropped += InvokeItemDroppedEvent;
         }
 
         private void OnDestroy()
         {
             foreach (var slot in _slots)
-                slot.ItemDropped -= ItemDroppedIntoSlot;
+                slot.ItemDropped -= InvokeItemDroppedEvent;
         }
 
-        public void AddItem(ItemView itemView)
+        public bool ContainsContent(ItemView view)
         {
-            var emptySlot = _slots.First(slot => slot.IsEmpty);
-            emptySlot.Initialize(itemView);
+            return _slots.FirstOrDefault(slot => slot.Content == view) != null;
         }
 
-        public void RemoveItem(ItemView itemView)
+        public bool Contains(ItemSlot slot)
         {
-            var slot = _slots.First(slot => slot.Content == itemView);
-            slot.RemoveContent();
+            return _slots.Contains(slot);
         }
 
         private ItemSlot[] FindSlotsInChildren()
@@ -58,9 +59,12 @@ namespace VendorTask.UI
             {
                 var itemView = _uiFactory.CreateItemView(item, _viewRoot);
                 slot.Initialize(itemView);
-
-                slot.ItemDropped += ItemDroppedIntoSlot;
             }
+        }
+
+        private void InvokeItemDroppedEvent(ItemSlot slot, ItemView view)
+        {
+            ItemDroppedInSlot?.Invoke(slot, view);
         }
     }
 }

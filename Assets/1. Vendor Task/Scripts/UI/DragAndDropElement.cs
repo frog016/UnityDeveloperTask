@@ -7,7 +7,8 @@ namespace VendorTask.UI
     public class DragAndDropElement : UIElement, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         private CanvasGroup _canvasGroup;
-        private DragAndDropEventData _eventData;
+        private Vector2 _oldPosition;
+        private bool _isDragSuccessful;
 
         protected override void OnAwake()
         {
@@ -17,8 +18,8 @@ namespace VendorTask.UI
         public void OnBeginDrag(PointerEventData eventData)
         {
             _canvasGroup.blocksRaycasts = false;
-            _eventData.OnStartDragCallback?.Invoke();
-            _eventData = new DragAndDropEventData(RectTransform.position);
+            _oldPosition = RectTransform.position;
+            _isDragSuccessful = false;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -29,12 +30,19 @@ namespace VendorTask.UI
         public void OnEndDrag(PointerEventData eventData)
         {
             _canvasGroup.blocksRaycasts = true;
-            RectTransform.position = _eventData.DropPosition;
+            if (_isDragSuccessful == false)
+                UndoDrag();
         }
 
-        public void SetEventData(DragAndDropEventData eventData)
+        public void AcceptDrag(Vector2 position)
         {
-            _eventData = eventData;
+            RectTransform.position = position;
+            _isDragSuccessful = true;
+        }
+
+        public void UndoDrag()
+        {
+            RectTransform.position = _oldPosition;
         }
     }
 }

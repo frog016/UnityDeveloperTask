@@ -1,20 +1,27 @@
 namespace VendorTask.Shop.Operation
 {
-    public class SellItemToVendorOperation : IOperation
+    public class SellItemToVendorOperation : ShopOperation
     {
-        public void Accept()
+        private readonly VendorShop _shop;
+
+        public SellItemToVendorOperation(VendorShop shop)
         {
-            throw new System.NotImplementedException();
+            _shop = shop;
         }
 
-        public void Undo()
+        public override void Accept()
         {
-            throw new System.NotImplementedException();
+            Slot.Initialize(Content);
+            _shop.Buy(Content.Item);
         }
 
-        public bool IsValid()
+        public override void Undo()
         {
-            throw new System.NotImplementedException();
+        }
+
+        public override bool IsValid()
+        {
+            return true;
         }
     }
 }

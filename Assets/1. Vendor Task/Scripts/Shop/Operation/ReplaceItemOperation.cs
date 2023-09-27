@@ -1,20 +1,20 @@
 namespace VendorTask.Shop.Operation
 {
-    public class ReplaceItemOperation : IOperation
+    public class ReplaceItemOperation : ShopOperation
     {
-        public void Accept()
+        public override void Accept()
         {
-            throw new System.NotImplementedException();
+            Slot.Initialize(Content);
         }
 
-        public void Undo()
+        public override void Undo()
         {
-            throw new System.NotImplementedException();
+            Content.UndoDrag();
         }
 
-        public bool IsValid()
+        public override bool IsValid()
         {
-            throw new System.NotImplementedException();
+            return Slot.IsEmpty;
         }
     }
 }

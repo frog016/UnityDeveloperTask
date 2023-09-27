@@ -9,7 +9,7 @@ namespace VendorTask.UI
     {
         public ItemView Content { get; private set; }
         public bool IsEmpty => Content == null;
-        public event Action<ItemView> ItemDropped;
+        public event Action<ItemSlot, ItemView> ItemDropped;
 
         public void Initialize(ItemView content)
         {
@@ -27,26 +27,18 @@ namespace VendorTask.UI
             if (Content != null || eventData.pointerDrag.TryGetComponent<ItemView>(out var element) == false)
                 return;
 
-            Content = element;
-            element.SetEventData(new DragAndDropEventData(
-                RectTransform.position,
-                RemoveContent));
-            ItemDropped?.Invoke(Content);
+            element.AcceptDrag(RectTransform.position);
+            ItemDropped?.Invoke(this, element);
         }
 
         #region Debug
 
-        protected override void OnAwake()
-        {
-            _debugColor = GetComponent<Image>().color;
-        }
-
-        private Color _debugColor;
+        [SerializeField] private Color _debugColor;
 
         private void OnDrawGizmos()
         {
-            //var color = Content == null ? _debugColor : Color.red;
-            //GetComponent<Image>().color = color;
+            var color = Content == null ? _debugColor : Color.red;
+            GetComponent<Image>().color = color;
         }
 
         #endregion

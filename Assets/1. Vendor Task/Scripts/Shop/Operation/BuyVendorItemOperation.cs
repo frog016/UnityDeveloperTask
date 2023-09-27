@@ -1,20 +1,30 @@
 namespace VendorTask.Shop.Operation
 {
-    public class BuyVendorItemOperation : IOperation
+    public class BuyVendorItemOperation : ShopOperation
     {
-        public void Accept()
+        private readonly VendorShop _shop;
+
+        public BuyVendorItemOperation(VendorShop shop)
         {
-            throw new System.NotImplementedException();
+            _shop = shop;
         }
 
-        public void Undo()
+        public override void Accept()
         {
-            throw new System.NotImplementedException();
+            Slot.Initialize(Content);
+            _shop.Sell(Content.Item);
         }
 
-        public bool IsValid()
+        public override void Undo()
         {
-            return true;
+            Content.UndoDrag();
+            //  TODO: Send notification about lack of money.
+        }
+
+        public override bool IsValid()
+        {
+            var cost = Content.Item.Cost;
+            return _shop.CustomerPerson.Wallet.IsEnough(cost);
         }
     }
 }

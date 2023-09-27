@@ -1,30 +1,31 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using VendorTask.Items;
 
 namespace VendorTask.Shop
 {
     public class VendorShop
     {
-        private readonly Person _vendorPerson;
-        private readonly Person _customerPerson;
+        public readonly Person VendorPerson;
+        public readonly Person CustomerPerson;
 
         private const float BuyCostPercent = 0.9f; 
 
         public VendorShop(Person vendorPerson, Person customerPerson)
         {
-            _vendorPerson = vendorPerson;
-            _customerPerson = customerPerson;
+            VendorPerson = vendorPerson;
+            CustomerPerson = customerPerson;
         }
 
-        public bool Buy(Item item)
+        public void Buy(Item item)
         {
             var cost = GetVendorCost(item);
-            return TryMakeDeal(_vendorPerson, _customerPerson, item, cost);
+            MakeDeal(VendorPerson, CustomerPerson, item, cost);
         }
 
-        public bool Sell(Item item)
+        public void Sell(Item item)
         {
-            return TryMakeDeal(_customerPerson, _vendorPerson, item, item.Cost);
+            MakeDeal(CustomerPerson, VendorPerson, item, item.Cost);
         }
 
         public int GetVendorCost(Item item)
@@ -32,18 +33,16 @@ namespace VendorTask.Shop
             return Mathf.RoundToInt(item.Cost * BuyCostPercent);
         }
 
-        private static bool TryMakeDeal(Person first, Person second, Item item, int finalCost)
+        private static void MakeDeal(Person first, Person second, Item item, int finalCost)
         {
             if (first.Wallet.IsEnough(item.Id) == false)
-                return false;
+                throw new InvalidOperationException($"{first.Wallet} doesn't have enough money.");
 
             first.Wallet.Spend(finalCost);
             second.Wallet.Add(finalCost);
 
             first.Inventory.Add(item);
             second.Inventory.Remove(item);
-
-            return true;
         }
     }
 }

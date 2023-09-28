@@ -1,8 +1,7 @@
-﻿using System;
+﻿using PathfindTask.Pathfinding;
+using PathfindTask.Structures;
 using System.Collections.Generic;
 using System.Linq;
-using PathfindTask.Pathfinding;
-using PathfindTask.Structures;
 using UnityEngine;
 
 namespace PathfindTask.Initialization
@@ -15,15 +14,21 @@ namespace PathfindTask.Initialization
         [Header("Data")]
         [SerializeField] private Transform _startPoint;
         [SerializeField] private Transform _endPoint;
-        [SerializeField] private Edge[] _edges;
-        [SerializeField] private Rectangle[] _rectangles;
+        [SerializeField] private RectangleInitializer[] _monoRectangles;
+        [SerializeField] private EdgeInitializer[] _monoEdges;
+
+        private IEnumerable<Rectangle> _rectangles;
+        private IEnumerable<Edge> _edges;
 
         private IPathfinder _pathfinder;
         private IPathExistingChecker _pathExistingChecker;
 
         private void Awake()
         {
-            var vertexGraph = CreateGraph(_rectangles, _edges);
+            _rectangles = _monoRectangles.Select(rect => rect.CreateRectangle());
+            _edges = _monoEdges.Select(edge => edge.CreateEdge());
+
+            var vertexGraph = new VertexGraph(_rectangles, _edges);
             var vertexPathfinder = new VertexPathfinder(vertexGraph);
 
             _pathfinder = new RectilinearMinimumLinkPathfinder(vertexPathfinder);
@@ -46,35 +51,6 @@ namespace PathfindTask.Initialization
             _pathDrawer.positionCount = points.Length;
             _pathDrawer.SetPositions(points.Select(p => (Vector3)p).ToArray());
 
-        }
-
-        private static VertexGraph CreateGraph(IEnumerable<Rectangle> rectangles, IEnumerable<Edge> edges)
-        {
-            return new VertexGraph(rectangles, edges);
-        }
-
-        [SerializeField] private bool _debugDraw;
-
-        private void OnDrawGizmos()
-        {
-            if (_debugDraw == false)
-                return;
-
-            Gizmos.color = Color.black;
-            foreach (var rectangle in _rectangles)
-            {
-                var size = rectangle.Size;
-                Gizmos.DrawLine(rectangle.Min, rectangle.Min + Vector2.Scale(Vector2.right, size));
-                Gizmos.DrawLine(rectangle.Min + Vector2.Scale(Vector2.right, size), rectangle.Max);
-                Gizmos.DrawLine(rectangle.Max, rectangle.Max + Vector2.Scale(Vector2.left, size));
-                Gizmos.DrawLine(rectangle.Max + Vector2.Scale(Vector2.left, size), rectangle.Min);
-            }
-
-            Gizmos.color = Color.green;
-            foreach (var edge in _edges)
-            {
-                Gizmos.DrawLine(edge.Start, edge.End);
-            }
         }
     }
 }

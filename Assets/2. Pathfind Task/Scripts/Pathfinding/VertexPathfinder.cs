@@ -14,7 +14,7 @@ namespace PathfindTask.Pathfinding
             _graph = graph;
         }
 
-        public IEnumerable<Vector3> Find(Vector2 start, Vector2 end)
+        public IEnumerable<Vector2> Find(Vector2 start, Vector2 end)
         {
             start = _graph.ToVertex(start);
             end = _graph.ToVertex(end);
@@ -46,36 +46,7 @@ namespace PathfindTask.Pathfinding
                 yield return point;
         }
 
-        public List<List<Vector2>> FindAllRecursive(Vector2 currentPoint, Vector2 endPoint, List<List<Vector2>> paths = null, List<Vector2> path = null)
-        {
-            currentPoint = _graph.ToVertex(currentPoint);
-            endPoint = _graph.ToVertex(endPoint);
-
-            path ??= new List<Vector2>();
-            paths ??= new List<List<Vector2>>();
-
-            path.Add(currentPoint);
-
-            if (currentPoint == endPoint)
-            {
-                paths.Add(path);
-                return paths;
-            }
-
-            foreach (var neighbor in _graph.GetNeighbors(currentPoint))
-            {
-                if (path.Contains(neighbor))
-                    continue;
-
-                var newPath = new List<Vector2>(path);
-                var newPaths = FindAllRecursive(neighbor, endPoint, paths, newPath);
-                paths.AddRange(newPaths);
-            }
-
-            return paths;
-        }
-
-        private static IEnumerable<Vector3> CreatePath(IReadOnlyDictionary<Vector2, Vector2> routs, Vector2 end)
+        private static IEnumerable<Vector2> CreatePath(IReadOnlyDictionary<Vector2, Vector2> routs, Vector2 end)
         {
             var pathItem = end;
             while (pathItem != EndPathMark)

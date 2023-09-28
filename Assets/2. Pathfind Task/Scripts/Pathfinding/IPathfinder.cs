@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
 using PathfindTask.Structures;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PathfindTask.Pathfinding

@@ -4,7 +4,8 @@ namespace VendorTask.Shop.Operation
     {
         public override void Accept()
         {
-            Slot.Initialize(Content);
+            RemoveContentFromPrevious();
+            Slot.SetContent(Content);
         }
 
         public override void Undo()

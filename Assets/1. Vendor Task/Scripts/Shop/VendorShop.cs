@@ -35,7 +35,7 @@ namespace VendorTask.Shop
 
         private static void MakeDeal(Person first, Person second, Item item, int finalCost)
         {
-            if (first.Wallet.IsEnough(item.Id) == false)
+            if (first.Wallet.IsEnough(finalCost) == false)
                 throw new InvalidOperationException($"{first.Wallet} doesn't have enough money.");
 
             first.Wallet.Spend(finalCost);

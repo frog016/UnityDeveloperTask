@@ -25,11 +25,13 @@ namespace VendorTask
         public void Initialize()
         {
             _playerUI.ItemDroppedInSlot += OnItemDroppedInput;
+            _vendorUI.ItemDroppedInSlot += OnItemDroppedInput;
         }
 
         public void Dispose()
         {
             _playerUI.ItemDroppedInSlot -= OnItemDroppedInput;
+            _vendorUI.ItemDroppedInSlot -= OnItemDroppedInput;
         }
 
         private void OnItemDroppedInput(ItemSlot slot, ItemView view)
@@ -38,7 +40,7 @@ namespace VendorTask
             var contentOwnerInventoryUI = _playerUI.ContainsContent(view) ? _playerUI : _vendorUI;
 
             var operation = GetOperationByInput(slotOwnerInventoryUI, contentOwnerInventoryUI);
-            operation.SetContext(slot, view);
+            operation.SetContext(slot, view, contentOwnerInventoryUI);
 
             if (operation.IsValid())
                 operation.Accept();

@@ -11,7 +11,8 @@ namespace VendorTask.Shop.Operation
 
         public override void Accept()
         {
-            Slot.Initialize(Content);
+            RemoveContentFromPrevious();
+            Slot.SetContent(Content);
             _shop.Buy(Content.Item);
         }
 

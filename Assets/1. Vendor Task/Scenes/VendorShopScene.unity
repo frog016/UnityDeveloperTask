@@ -535,7 +535,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5093a4c67c82c5f47b0f6e60f26ecc32, type: 2}
   _playerItemIds: 00000000010000000300000000000000
   _vendorItemIds: 02000000020000000400000006000000050000000000000000000000
-  _playerInitialWalletBalance: 1000
+  _playerInitialWalletBalance: 300
   _playerWalletView: {fileID: 1236734970}
 --- !u!1001 &146306829
 PrefabInstance:

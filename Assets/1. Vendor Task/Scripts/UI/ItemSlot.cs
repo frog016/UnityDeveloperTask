@@ -11,7 +11,7 @@ namespace VendorTask.UI
         public bool IsEmpty => Content == null;
         public event Action<ItemSlot, ItemView> ItemDropped;
 
-        public void Initialize(ItemView content)
+        public void SetContent(ItemView content)
         {
             Content = content;
             Content.RectTransform.position = RectTransform.position;

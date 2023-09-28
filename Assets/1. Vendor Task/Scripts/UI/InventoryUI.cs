@@ -24,16 +24,22 @@ namespace VendorTask.UI
 
             _uiFactory = uiFactory;
             _slots = FindSlotsInChildren();
-            InitializeSlotsWithItems(items);
 
-            foreach (var slot in _slots)
-                slot.ItemDropped += InvokeItemDroppedEvent;
+            InitializeSlots();
+            InitializeSlotsWithItems(items);
         }
 
         private void OnDestroy()
         {
             foreach (var slot in _slots)
                 slot.ItemDropped -= InvokeItemDroppedEvent;
+        }
+
+        public void RemoveContentFromSlot(ItemView content)
+        {
+            var previousSlot = _slots.FirstOrDefault(slot => slot.Content == content);
+            if (previousSlot != null)
+                previousSlot.RemoveContent();
         }
 
         public bool ContainsContent(ItemView view)
@@ -52,13 +58,19 @@ namespace VendorTask.UI
                 .ToArray();
         }
 
+        private void InitializeSlots()
+        {
+            foreach (var slot in _slots)
+                slot.ItemDropped += InvokeItemDroppedEvent;
+        }
+
         private void InitializeSlotsWithItems(IEnumerable<Item> items)
         {
             var slotItemPairs = _slots.Zip(items, Tuple.Create);
             foreach (var (slot, item) in slotItemPairs)
             {
                 var itemView = _uiFactory.CreateItemView(item, _viewRoot);
-                slot.Initialize(itemView);
+                slot.SetContent(itemView);
             }
         }
 

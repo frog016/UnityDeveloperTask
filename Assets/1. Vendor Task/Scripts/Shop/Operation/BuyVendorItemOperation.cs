@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace VendorTask.Shop.Operation
 {
     public class BuyVendorItemOperation : ShopOperation
@@ -11,14 +13,15 @@ namespace VendorTask.Shop.Operation
 
         public override void Accept()
         {
-            Slot.Initialize(Content);
+            RemoveContentFromPrevious();
+            Slot.SetContent(Content);
             _shop.Sell(Content.Item);
         }
 
         public override void Undo()
         {
             Content.UndoDrag();
-            //  TODO: Send notification about lack of money.
+            Debug.Log("You don't have enough money in your wallet.");
         }
 
         public override bool IsValid()
